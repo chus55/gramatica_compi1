@@ -1,0 +1,219 @@
+Program -> Statement_List
+Statement_List  -> Statement Statement_List
+                | Epsilon
+Statement   ->  Basic_Statement
+            |   Declarative_Statement
+
+Basic_Statement ->  Variable_Declaration
+                |   If_Statement
+                |   Iterate_Statement
+                |   Jump_Statement
+                |   Compound_Statement
+                |   Expression_Statement
+
+Declarative_Statement   ->  FunOrVar_Declaration
+                        |   Class_Declaration
+                        |   Enum_Declaration
+                        |   Interface_Declaration
+                        |   Using_Statement
+
+//If_Statement    ->  if()
+
+Variable_Declaration    ->  typeSpecifier isArrayIdentifier Id initializer declarationList ;
+
+declarationList -> , declaration declarationList
+                | Epsilon
+                    
+declaration ->  Id isArray initializer
+
+isArrayIdentifier    ->  [] isArrayIdentifier
+            |   Epsilon
+
+initializer -> = initializer_P
+            | Epsilon
+
+initializer_P    ->  Assignment_Expression
+                |   { arrayInitializer }
+                | 'new' typeSpecifier isArrayOrConstructor
+
+isArrayOrConstructor    ->  isArrayIdentifierDeeper
+                        |   (paramList)
+
+paramList   ->  param paramList_P
+            |   Epsilon
+
+paramList_P ->  , paramList
+            |   Epsilon
+
+param  ->  Literal
+        |  Id FunctionCallOrId
+
+FunctionCallOrId    ->  ( paramList )
+                    |   . Id FunctionCallOrId
+                    |   Epsilon
+
+isArrayIdentifierDeeper ->  [ IntOrId ] isArrayIdentifierDeeper_P
+                        |   Epsilon
+
+isArrayIdentifierDeeper_P   ->  [ ]
+                            Epsilon
+
+IntOrId ->  Literal_int
+        |   Id
+
+arrayInitializer -> Expression
+                 | arrayInitializer_P
+                 
+arrayInitializer_P -> { arrayInitializer }  arrayInitializer_P2
+
+arrayInitializer_P2 -> , arrayInitializer_P
+                  | Epsilon
+
+typeSpecifier -> Int
+             |  Float
+             | Bool
+             | Char
+             | String
+             | Void
+             | Id
+
+Using_Statement ->  "using" id
+
+Compound_Statement  ->  '{' Basic_Statement_List '}'
+
+Basic_Statement_List    ->  Basic_Statement Basic_Statement_List
+                        |   Epsilon
+
+Expression_Statement    ->  Expression ';'
+                        |   ';'
+
+Expression  ->  Assignment_Expression Inline_Expression
+
+Inline_Expression   ->  ',' Expression
+                    |   Epsilon
+
+Assignment_Expression   ->  Null_Coalescing_Expression Ternary_Expression Assignment_Expression_P
+
+Assignment_Expression_P ->  Assigment_Operator Assignment_Expression
+                        |   Epsilon
+
+AssigmentOperator ->    =
+                   |    *=
+                   |    /=
+                   |    %=
+                   |    +=
+                   |    -=
+                   |    <<=
+                   |    >>=
+                   |    &=
+                   |    ^=
+                   |    |=
+
+Ternary_Expression  ->  ? Expression : Assignment_Expression
+                    |   Epsilon
+
+Null_Coalescing_Expression  ->  LogicalOr_Expression Null_Coalescing_Expression_P
+
+Null_Coalescing_Expression_P    ->  ?? Null_Coalescing_Expression
+                                |   Epsilon
+
+LogicalOr_Expression   ->  LogicalBitwiseAndExpression LogicalOrExpression_P
+
+LogicalOrExpression_P  ->   || LogicalBitwiseAndExpression
+                        |   Epsilon
+
+LogicalBitwiseAndExpression -> BitwiseOrExpression LogicalBitwiseAndExpression_P
+
+LogicalBitwiseAndExpression_P -> && BitwiseOrExpression
+                      | Epsilon
+
+BitwiseOrExpression -> XorExpression BitwiseOrExpression_P
+
+BitwiseOrExpression_P -> | XorExpression
+                        | Epsilon
+
+XorExpression -> BitwiseAndExpression XorExpression_P
+
+XorExpression_P -> ^ BitwiseAndExpression
+                      | Epsilon
+                        
+BitwiseAndExpression ->    EqualityExpression BitwiseAndExpression_P
+
+BitwiseAndExpression_P -> & EqualityExpression
+                  | Epsilon
+               
+EqualityExpression ->   RelationalExpression  EqualityExpression_P
+                    
+EqualityExpression_P -> == RelationalExpression
+                    | != RelationalExpression
+                    | Epsilon
+                    
+RelationalExpression -> ShiftExpression RelationalExpression_P
+                      
+RelationalExpression_P -> < ShiftExpression
+                      |  > ShiftExpression
+                      |  <= ShiftExpression
+                      |  >= ShiftExpression
+                      | Epsilon
+                      
+ShiftExpression ->  AdditiveExpression ShiftExpression_P
+                 
+ShiftExpression_P -> << AdditiveExpression
+                 | >> AdditiveExpression
+                 | Epsilon
+                 
+AdditiveExpression ->   MultiplicativeExpression  AdditiveExpression_P
+                    
+AdditiveExpression_P -> + MultiplicativeExpression AdditiveExpression_P
+                    | - MultiplicativeExpression AdditiveExpression_P
+                    | Epsilon
+                    
+MultiplicativeExpression -> UnaryExpression MultiplicativeExpression_P 
+                          
+MultiplicativeExpression_P -> * UnaryExpression MultiplicativeExpression_P
+                          |  / UnaryExpression MultiplicativeExpression_P
+                          |  % UnaryExpression MultiplicativeExpression_P
+                          | Epsilon
+
+UnaryExpression -> PostfixExpression
+                 |  ++UnaryExpression
+                 |  --UnaryExpression
+                 | UnaryOperator UnaryExpression
+
+UnaryOperator ->    &
+               |    *
+               |    +
+               |    -
+               |    ~
+               |    !
+
+PostfixExpression ->    PrimaryExpression PostfixExpression_P
+
+PostfixExpression_P  ->  ( AssignmentExpressionList )
+                   |    ++
+                   |    --
+                   |    Epsilon
+
+AssignmentExpressionList -> Assignment_Expression AssignmentExpressionList_P
+                          | Epsilon
+
+AssignmentExpressionList_P   ->  , Assignment_Expression AssignmentExpressionList_P
+                            |   Epsilon
+
+PrimaryExpression -> Id AccessLink_P
+                   | Literal
+                   | ( Expression ) AccessLink_P
+
+AccessLink -> [ Expression ] AccessLink_P
+           | . Id AccessLink_P
+           
+AccessLink_P -> AccessLink AccessLink_P
+           | Epsilon
+
+Literal -> IntLiteral
+         | CharLiteral
+         | FloatLiteral
+         | StringLiteral
+         | DateLiteral
+         | true
+         | false
