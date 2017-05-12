@@ -77,6 +77,8 @@ While_Statement -> while '(' Expression ')' Block
 
 Do_While_Statement -> do Block while '(' Expression ')' ';'
 
+ForEach_Statement -> foreach '(' typeSpecifier Id in PrimaryExpression ')' Block
+
 Variable_Declaration    ->  typeSpecifier isArrayIdentifier Id initializer declarationList ;
 
 declarationList -> , declaration declarationList

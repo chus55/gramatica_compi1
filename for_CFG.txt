@@ -16,3 +16,5 @@ For_Iterator -> Expression
 For_Body -> Compound_Statement
 		  | Basic_Statement
 		  | Epsilon 
+
+ForEach_Statement -> foreach '(' typeSpecifier Id in PrimaryExpression ')' Block
