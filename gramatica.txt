@@ -27,6 +27,7 @@ FunctionCall    ->  ( paramList ) Concat_Call
 Concat_Call ->  . FunctionCall_Statement
             | Epsilon
 
+//IF
 /*Semantico: Expression debe returnar un valor booleano*/
 If_Statement    ->  if(Expression) If_Statement_Body Else_statement
 
@@ -36,6 +37,7 @@ If_Statement_Body  ->  Compound_Statement
 Else_statement  ->  else If_Statement_Body
                 | Epsilon
 
+//SWITCH
 Switch_Statement -> switch '('  Expression ')' '{' Switch_Body '}'
 
 /*Semantico: validar que los operandos sean literales*/
@@ -50,6 +52,26 @@ Case    -> case LogicalOr_Expression ':' Case_Body
 
 Case_Body -> Basic_Statement_List
       |  Compound_Statement 
+
+//ITERATORS
+Iterate_Statement -> For_Statement
+          |  While_Statement
+          |  Do_While_Statement
+          |  ForEach_Statement
+
+//Semantica: Validar que LogicalOr_Expression returns boolean
+For_Statement -> for '(' For_initialialize ';' LogicalOr_Expression';' For_Iterator';' ')' For_Body
+
+For_initialialize -> Expression
+          |  Epsilon
+
+//Semantica: validar que expression no sea solo literal o id
+For_Iterator -> Expression
+        | Epsilon
+
+For_Body -> Compound_Statement
+      | Basic_Statement
+      | Epsilon 
 
 Variable_Declaration    ->  typeSpecifier isArrayIdentifier Id initializer declarationList ;
 

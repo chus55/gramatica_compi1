@@ -1,0 +1,18 @@
+Iterate_Statement -> For_Statement
+				  |  While_Statement
+				  |  Do_While_Statement
+				  |  ForEach_Statement
+
+//Semantica: Validar que LogicalOr_Expression returns boolean
+For_Statement -> for '(' For_initialialize ';' LogicalOr_Expression';' For_Iterator';' ')' For_Body
+
+For_initialialize -> Expression
+				  |  Epsilon
+
+//Semantica: validar que expression no sea solo literal o id
+For_Iterator -> Expression
+			  | Epsilon
+
+For_Body -> Compound_Statement
+		  | Basic_Statement
+		  | Epsilon 
