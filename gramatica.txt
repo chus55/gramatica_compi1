@@ -5,8 +5,8 @@ Statement   ->  Basic_Statement
             |   Declarative_Statement
 
 Basic_Statement ->  Variable_Declaration
-                |   If_Statement  *TODO*
-                |   switch_statement *TODO*
+                |   If_Statement
+                |   Switch_Statement
                 |   Iterate_Statement *TODO*
                 |   Jump_Statement  *TODO*
                 |   Compound_Statement
@@ -27,6 +27,7 @@ FunctionCall    ->  ( paramList ) Concat_Call
 Concat_Call ->  . FunctionCall_Statement
             | Epsilon
 
+/*Semantico: Expression debe returnar un valor booleano*/
 If_Statement    ->  if(Expression) If_Statement_Body Else_statement
 
 If_Statement_Body  ->  Compound_Statement
@@ -35,6 +36,20 @@ If_Statement_Body  ->  Compound_Statement
 Else_statement  ->  else If_Statement_Body
                 | Epsilon
 
+Switch_Statement -> switch '('  Expression ')' '{' Switch_Body '}'
+
+/*Semantico: validar que los operandos sean literales*/
+Switch_Body   -> Case List_Cases
+
+List_Cases -> Case
+      | Epsilon
+
+Case    -> case LogicalOr_Expression ':' Case_Body
+      | default ':' Case_Body
+      | epsilon 
+
+Case_Body -> Basic_Statement_List
+      |  Compound_Statement 
 
 Variable_Declaration    ->  typeSpecifier isArrayIdentifier Id initializer declarationList ;
 
