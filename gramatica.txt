@@ -6,6 +6,7 @@ Statement   ->  Basic_Statement
 
 Basic_Statement ->  Variable_Declaration
                 |   If_Statement  *TODO*
+                |   switch_statement *TODO*
                 |   Iterate_Statement *TODO*
                 |   Jump_Statement  *TODO*
                 |   Compound_Statement
@@ -26,7 +27,7 @@ FunctionCall    ->  ( paramList ) Concat_Call
 Concat_Call ->  . FunctionCall_Statement
             | Epsilon
 
-If_Statement    ->  if(LogicalExpression) If_Statement_Body Else_statement
+If_Statement    ->  if(Expression) If_Statement_Body Else_statement
 
 If_Statement_Body  ->  Compound_Statement
                     |   Basic_Statement
@@ -34,7 +35,6 @@ If_Statement_Body  ->  Compound_Statement
 Else_statement  ->  else If_Statement_Body
                 | Epsilon
 
-LogicalExpression  ->  
 
 Variable_Declaration    ->  typeSpecifier isArrayIdentifier Id initializer declarationList ;
 
@@ -50,7 +50,7 @@ initializer -> = initializer_P
             | Epsilon
 
 initializer_P    ->  Assignment_Expression
-                |   { arrayInitializer }
+                |   inlineArrayDeclaration
                 | 'new' typeSpecifier isArrayOrConstructor
 
 isArrayOrConstructor    ->  isArrayIdentifierDeeper
