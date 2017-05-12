@@ -60,7 +60,7 @@ Iterate_Statement -> For_Statement
           |  ForEach_Statement
 
 //Semantica: Validar que LogicalOr_Expression returns boolean
-For_Statement -> for '(' For_initialialize ';' LogicalOr_Expression';' For_Iterator';' ')' For_Body
+For_Statement -> for '(' For_initialialize ';' LogicalOr_Expression';' For_Iterator';' ')' Block
 
 For_initialialize -> Expression
           |  Epsilon
@@ -69,9 +69,15 @@ For_initialialize -> Expression
 For_Iterator -> Expression
         | Epsilon
 
-For_Body -> Compound_Statement
-      | Basic_Statement
-      | Epsilon 
+Block -> Compound_Statement
+      | Basic_Statement 
+      | ';' 
+
+While_Statement -> while '(' Expression ')' Block
+
+Do_While_Statement -> do Block while '(' Expression ')' ';'
+
+ForEach_Statement -> foreach '(' typeSpecifier Id in PrimaryExpression ')' Block
 
 Variable_Declaration    ->  typeSpecifier isArrayIdentifier Id initializer declarationList ;
 
