@@ -72,8 +72,9 @@ FunctionCallOrId    ->  ( paramList )
 isArrayIdentifierDeeper ->  [ IntOrId ] isArrayIdentifierDeeper_P
                         |   Epsilon
 
-isArrayIdentifierDeeper_P   ->  [ ]
-                            Epsilon
+isArrayIdentifierDeeper_P   ->  [ ] isArrayIdentifierDeeper_P
+                            | inlineArrayDeclaration
+                            |  Epsilon
 
 IntOrId ->  Literal_int
         |   Id
@@ -81,10 +82,13 @@ IntOrId ->  Literal_int
 arrayInitializer -> Expression
                  | arrayInitializer_P
                  
-arrayInitializer_P -> { arrayInitializer }  arrayInitializer_P2
+arrayInitializer_P -> inlineArrayDeclaration  arrayInitializer_P2
+                    | 'new' typeSpecifier  isArrayOrConstructor
 
 arrayInitializer_P2 -> , arrayInitializer_P
                   | Epsilon
+
+inlineArrayDeclaration -> { arrayInitializer } 
 
 typeSpecifier -> Int
              |  Float

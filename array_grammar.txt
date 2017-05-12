@@ -1,0 +1,50 @@
+//39
+Variable_Declaration    ->  typeSpecifier isArrayIdentifier Id initializer declarationList ;
+
+
+//46
+isArrayIdentifier    ->  [] isArrayIdentifier
+            |   Epsilon
+
+
+//49-54
+initializer -> = initializer_P
+            | Epsilon
+
+initializer_P    ->  Assignment_Expression
+                |   inlineArrayDeclaration
+                | 'new' typeSpecifier isArrayOrConstructor
+
+//56
+isArrayOrConstructor    ->  isArrayIdentifierDeeper
+                        |   (paramList)
+//BOREEEEEEE
+isArrayOrConstructor    ->  'new' typeSpecifier { }
+                        |   
+
+//75
+isArrayIdentifierDeeper ->  [ IntOrId ] isArrayIdentifierDeeper_P
+                        |   Epsilon
+//CAMBIOOOOOO
+isArrayIdentifierDeeper_P   ->  [ ] isArrayIdentifierDeeper_P
+                          	| inlineArrayDeclaration
+                          	|  Epsilon
+
+//41
+declarationList -> , declaration declarationList
+                | Epsilon
+                    
+declaration ->  Id isArray initializer
+
+
+//84-90
+arrayInitializer -> Expression
+                 | arrayInitializer_P
+//CAMBIOOOOOO                 
+arrayInitializer_P -> inlineArrayDeclaration  arrayInitializer_P2
+					| 'new' typeSpecifier  isArrayOrConstructor
+
+arrayInitializer_P2 -> , arrayInitializer_P 
+						| Epsilon
+
+inlineArrayDeclaration -> { arrayInitializer } 
