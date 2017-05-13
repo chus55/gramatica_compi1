@@ -226,7 +226,79 @@ argument-list-p:
 	| ',' expression argument-list-p
 	| EPSILON
 
-expression: //TODO
+expression:
+	| expression '?' expression ':' expression
+	| expression "||" expression
+	| expression "&&" expression
+	| expression '|' expression
+	| expression '^' expression
+	| expression '&' expression
+	| expression expression-equality-operator expression
+	| expression expression-relational-operator expression
+	| expression "is" built-in-type
+	| expression expression-shift-operator expression
+	| expression '+' expression
+	| expression '-' expression
+	| expression '*' expression
+	| expression '/' expression
+	| expression '%' expression
+	| unary-expression
+	| unary-expression assignment-operator expression
+
+expression-shift-operator: 
+	| "<<"
+	| ">>"
+
+expression-equality-operator:
+	| "=="
+	| "!="
+
+expression-relational-operator:
+	| '<'
+	| '>'
+	| "<="
+	| ">="
+	| "is"
+	| "as"
+
+assignment-operator:
+	| '='
+	| "+="
+	| "-="
+	| "*="
+	| "/="
+	| "%="
+	| "&="
+	| "|="
+	| "^="
+	| "<<="
+	| ">>="
+
+unary-expression:
+	| expression-unary-operator unary-expression
+	| primary-expression
+
+expression-unary-operator:
+	| '+'
+	| '-'
+	| "++"
+	| "--"
+
+// REVISAR 'BASE'
+primary-expression:
+	| "new" non-array-type '[' expression-list ']' optional-rank-specifier-list optional-array-initializer
+	| "new" array-type array-initializer
+	| literal
+	| identifier
+	| '(' expression ')'
+	| primary-expression '.' identifier
+	| predefined-type '.' identifier
+	| primary-expression '(' argument-list ')'
+	| primary-expression '[' expression-list ']'
+	| "this"
+	| primary-expression increment-decrement
+	| "new" type '(' argument-list ')'
+
 
 method-declaration:
 	| method-header maybe-empty-block
