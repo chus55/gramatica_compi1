@@ -6,9 +6,9 @@
 - ~~Bool~~
 - ~~Enumeraciones~~
 - ~~Clases/Interfaces~~
-- Arreglos Multidimensionales
+- ~~Arreglos Multidimensionales~~
 - ~~Arreglos de Arreglos~~
-- Hash
+- Hash?
 
 ## POO
 - ~~Encapsulamiento (private,public,protected)~~
@@ -24,19 +24,19 @@
 - ~~For~~
 - ~~ForEach~~
 - ~~Switch~~
-- Invocar función o método de instancia o método estático
+- ~~Invocar función o método de instancia o método estático~~
 - ~~Return~~
 - ~~Break/Continue~~
 - ~~Using <namespace>~~
 - ~~Declarar namespace~~
 - ~~Declarar variables con/sin inicialización~~
-- Uso de var
+- ~~Uso de var~~
 
 ## Operadores
-- Aritmetico
-- Post/Pre Incremento, Acumuladores
-- Bits
-- Logico
-- As, Is
-- Casting
-- Ternario
+- ~~Aritmetico~~
+- ~~Post/Pre Incremento, Acumuladores~~
+- ~~Bits~~
+- ~~Logico~~
+- ~~As, Is~~
+- ~~Casting~~
+- ~~Ternario~~
