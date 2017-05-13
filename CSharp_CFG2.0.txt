@@ -88,14 +88,14 @@ identifiers-list-p:
 	| EPSILON
 
 maybe-empty-block:
-	| '{' optional-statements-list '}'
+	| '{' optional-statement-list '}'
 	| ';'
 
-optional-statements-list: 
-	| statements-list
+optional-statement-list: 
+	| statement-list
 	| EPSILON
 
-statements-list: //TODO
+statement-list: //TODO
 
 statement:
 	| local-variable-declaration ';'
@@ -161,7 +161,7 @@ switch-statement:
 	| "switch" '(' expression ')' '{' optional-switch-section-list '}'
 
 optional-switch-section-list:
-	| switch-label-list statements-list optional-switch-section-list
+	| switch-label-list statement-list optional-switch-section-list
 	| EPSILON
 
 switch-label-list:
