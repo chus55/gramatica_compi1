@@ -194,7 +194,7 @@ expression-statement:
 	| ';'
 
 expression:
-	| assigmnet-expression inline-expression
+	| assignment-expression inline-expression
 
 inline-expression:
 	| ',' expression
@@ -205,7 +205,7 @@ assignment-expression:
 
 assignment-expression-p:
 	| assignment-operator assignment-expression
-	ε
+	| ε
 
 assignment-operator:
 	| "="
