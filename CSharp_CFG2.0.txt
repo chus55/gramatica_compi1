@@ -160,16 +160,9 @@ selection-statement:
 switch-statement:
 	| "switch" '(' expression ')' '{' optional-switch-section-list '}'
 
-optional-switch-section-list
-	| switch-section-list
+optional-switch-section-list:
+	| switch-label-list statements-list optional-switch-section-list
 	| EPSILON
-
-switch-section-list:
-	| switch-label-list statements-list switch-section-list-p
-
-switch-section-list-p:
-	| switch-section-list
-	| EPSILON	
 
 switch-label-list:
 	| switch-label switch-label-list-p
