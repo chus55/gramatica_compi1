@@ -158,13 +158,30 @@ selection-statement:
 	| switch-statement
 
 switch-statement:
-	| "switch" '(' expression ')' '{' switch-section-list '}'
+	| "switch" '(' expression ')' '{' optional-switch-section-list '}'
+
+optional-switch-section-list
+	| switch-section-list
+	| EPSILON
 
 switch-section-list:
-	| switch-label-list statements-list switch-section-list
+	| switch-label-list statements-list switch-section-list-p
+
+switch-section-list-p:
+	| switch-section-list
 	| EPSILON	
 
-switch-label-list: //TODO
+switch-label-list:
+	| switch-label switch-label-list-p
+
+switch-label-list-p:
+	| switch-label-list
+	| EPSILON
+	
+switch-label:
+	| "case" expression ':'
+	| "default" ':'
+
 
 if-statement:
 	| "if" '(' expression ')' embedded-statement optional-else-part
@@ -300,3 +317,5 @@ variable-initializer-list:
 variable-initializer-list-p:
 	| ',' variable-initializer-list
 	| EPSILON
+
+	
