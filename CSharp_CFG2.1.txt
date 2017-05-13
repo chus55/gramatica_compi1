@@ -230,23 +230,29 @@ argument-list-p:
 	| EPSILON
 
 expression:
-	| expression '?' expression ':' expression
-	| expression "||" expression
-	| expression "&&" expression
-	| expression '|' expression
-	| expression '^' expression
-	| expression '&' expression
-	| expression expression-equality-operator expression
-	| expression expression-relational-operator expression
-	| expression "is" built-in-type
-	| expression expression-shift-operator expression
-	| expression '+' expression
-	| expression '-' expression
-	| expression '*' expression
-	| expression '/' expression
-	| expression '%' expression
-	| unary-expression
-	| unary-expression assignment-operator expression
+    | unary-expression factorized-main-expression
+	
+factorized-main-expression:
+    | expression-p
+	| assignment-operator expression expression-paramaters
+
+expression-p:
+    | '?' expression ':' expression expression-p
+	| "||" expression expression-p
+	| "&&" expression expression-p
+	| '|' expression expression-p
+	| '^' expression expression-p
+	| '&' expression expression-p
+	| expression-equality-operator expression expression-p
+	| expression-relational-operator expression expression-p
+	| "is" built-in-type expression-p
+	| expression-shift-operator expression expression-p
+	| '+' expression expression-p
+	| '-' expression expression-p
+	| '*' expression expression-p
+	| '/' expression expression-p
+	| '%' expression expression-p
+    | EPSILON
 
 expression-shift-operator: 
 	| "<<"
@@ -290,17 +296,23 @@ expression-unary-operator:
 
 // REVISAR 'BASE'
 primary-expression:
-	| "new" type '[' expression-list ']' optional-rank-specifier-list optional-array-initializer
-	| "new" array-type array-initializer
-	| literal
-	| identifier
-	| '(' expression ')'
-	| primary-expression '.' identifier
-	| primary-expression '(' argument-list ')'
-	| primary-expression '[' expression-list ']'
-	| "this"
-	| primary-expression increment-decrement
-	| "new" type '(' argument-list ')'
+    | "new" instance-expression primary-expression-p
+	| literal primary-expression-p
+	| identifier primary-expression-p
+	| '(' expression ')' primary-expression-p
+	| "this" primary-expression-p
+
+instance-expression:
+    | type '[' expression-list ']' optional-rank-specifier-list optional-array-initializer
+	| array-type array-initializer
+    | type '(' argument-list ')'
+
+primary-expression-p:
+    | '.' identifier primary-expression-p
+	| '(' argument-list ')' primary-expression-p
+	| '[' expression-list ']' primary-expression-p
+    | increment-decrement primary-expression-p
+    | EPSILON
 
 literal:
 	| int-literal
@@ -423,5 +435,3 @@ variable-initializer-list:
 variable-initializer-list-p:
 	| ',' variable-initializer-list
 	| EPSILON
-
-	
