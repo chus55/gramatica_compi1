@@ -1,7 +1,6 @@
 /*
 	Consideraciones: 
 		1. Todos las producciones "optional" deben tener una produccion "EPSILON"
-
 */
 
 code:
@@ -15,7 +14,7 @@ using-directive:
 	| "using" identifier identifier-attribute ';' optional-using-directive
 
 optional-using-directive:
-	| using-directive
+	| using-directivek
 	| EPSILON
 
 identifier-attribute:
@@ -36,13 +35,19 @@ namespace-declaration:
 namespace-body:
 	| '{' optional-using-directive optional-namespace-member-declaration '}'
 
-type-declaration:
+type-declaration: //TO-FIX: AMBIGUOUS
 	| class-declaration
     | interface-declaration
     | enum-declaration
 
 class-declaration:
 	| class-modifier "class" identifier inheritance-base class-body optional-body-end
+
+class-modifier:
+	| "public"
+	| "protected"
+	| "private"
+	| "abstract"
 
 inheritance-base:
 	| ':' identifiers-list
@@ -51,7 +56,7 @@ inheritance-base:
 class-body:
 	| '{' class-member-declaration '}'
 
-class-member-declaration:
+class-member-declaration: //TO-FIX: AMBIGUOUS
 	| field-declaration
 	| method-declaration
 	| constructor-declaration
@@ -91,18 +96,18 @@ maybe-empty-block:
 	| '{' optional-statement-list '}'
 	| ';'
 
-optional-statement-list: 
+optional-statement-list: //TO-FIX: AMBIGUOUS
 	| statement-list
 	| EPSILON
 
-statement-list:  
+statement-list:  //TO-FIX: AMBIGUOUS
 	| statement optional-statement-list 
 
-statement:
+statement: //TO-FIX: AMBIGUOUS
 	| local-variable-declaration ';'
 	| embedded-statement
 
-embedded-statement:
+embedded-statement: //TO-FIX: AMBIGUOUS
 	| maybe-empty-block
 	| statement-expression ';'
 	| selection-statement
@@ -132,22 +137,22 @@ jump-statement:
 	| "continue" ';'
 	| "return" optional-expression ';'
 
-optional-statement-expression-list:
+optional-statement-expression-list: //TO-FIX: AMBIGUOUS
 	| statement-expression-list
 	| EPSILON
 
-statement-expression-list:
+statement-expression-list: //TO-FIX: AMBIGUOUS
 	| statement-expression statement-expression-list-p
 
 statement-expression-list-p:
 	| ',' statement-expression statement-expression-list-p
 	| EPSILON
 
-optional-expression:
+optional-expression: //TO-FIX: AMBIGUOUS
 	| expression
 	| EPSILON
 
-optional-for-initializer:
+optional-for-initializer: //TO-FIX: AMBIGUOUS
 	| local-variable-declaration
 	| statement-expression-list
 	| EPSILON
@@ -184,9 +189,8 @@ optional-else-part:
 else-part:
 	| "else" embedded-statement	
 
-statement-expression: 
+statement-expression: //TO-FIX: AMBIGUOUS
 	| primary-expression statement-expression-p
-	| "new" type '(' argument-list ')'
 	| unary-expression assignment-expression expression
 	| increment-decrement primary-expression
 
@@ -210,7 +214,7 @@ type:
 	| "string"
 	| "bool"
 	| "float"
-	| id
+	| identifier
 
 type-or-var:
 	| type
@@ -220,7 +224,7 @@ type-or-void:
 	| type
 	| "void"
 
-argument-list:
+argument-list: //TO-FIX: AMBIGUOUS
 	| expression argument-list-p
 	| EPSILON
 
@@ -228,7 +232,7 @@ argument-list-p:
 	| ',' expression argument-list-p
 	| EPSILON
 
-expression:
+expression: //TO-FIX: AMBIGUOUS
     | unary-expression factorized-main-expression
 	
 factorized-main-expression:
@@ -283,7 +287,7 @@ assignment-operator:
 	| "<<="
 	| ">>="
 
-unary-expression:
+unary-expression: //TO-FIX: AMBIGUOUS
 	| expression-unary-operator unary-expression
 	| '(' type ')' unary-expression
 	| primary-expression
@@ -291,8 +295,7 @@ unary-expression:
 expression-unary-operator:
 	| '+'
 	| '-'
-	| "++"
-	| "--"
+	| increment-decrement
 	| "!"
 	| "~"
 	| "*"
@@ -305,7 +308,7 @@ primary-expression:
 	| '(' expression ')' primary-expression-p
 	| "this" primary-expression-p
 
-instance-expression:
+instance-expression: //TO-FIX: AMBIGUOUS
     | type '[' expression-list ']' optional-rank-specifier-list optional-array-initializer
 	| array-type array-initializer
     | type '(' argument-list ')'
@@ -325,10 +328,10 @@ literal:
 	| "true"
 	| "false"
 
-expression-list:
+expression-list: //TO-FIX: AMBIGUOUS
 	| expression optional-expression-list
 
-optional-expression-list:
+optional-expression-list: //TO-FIX: AMBIGUOUS
 	| expression-list
 	| EPSILON
 
@@ -382,7 +385,7 @@ variable-declarator-list-p:
 	| ',' variable-declarator-list
 	| EPSILON
 
-variable-initializer:
+variable-initializer: //TO-FIX: AMBIGUOUS
 	| expression
 	| array-initializer
 
@@ -428,17 +431,16 @@ optional-array-initializer:
 array-initializer: 
 	| '{' optional-variable-initializer-list '}'
 
-optional-variable-initializer-list:
+optional-variable-initializer-list: //TO-FIX: AMBIGUOUS
 	| variable-initializer-list
 	| EPSILON
 
-variable-initializer-list:
+variable-initializer-list: //TO-FIX: AMBIGUOUS
 	| variable-initializer variable-initializer-list-p
 
 variable-initializer-list-p:
 	| ',' variable-initializer-list
 	| EPSILON
-
 
 increment-decrement:
 	| "++"
