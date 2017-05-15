@@ -234,7 +234,7 @@ expression:
 	
 factorized-main-expression:
     | expression-p
-	| assignment-operator expression expression-paramaters
+	| assignment-operator expression expression-p
 
 expression-p:
     | '?' expression ':' expression expression-p
