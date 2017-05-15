@@ -185,10 +185,9 @@ else-part:
 	| "else" embedded-statement	
 
 statement-expression: 
-	| primary-expression '(' argument-list ')'
+	| primary-expression statement-expression-p
 	| "new" type '(' argument-list ')'
 	| unary-expression assignment-expression expression
-	| primary-expression increment-decrement
 	| increment-decrement primary-expression
 
 local-variable-declaration:
@@ -444,3 +443,7 @@ variable-initializer-list-p:
 increment-decrement:
 	| "++"
 	| "--"
+
+statement-expression-p:
+	| '(' argument-list ')'
+	| increment-decrement
