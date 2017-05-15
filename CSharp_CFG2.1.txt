@@ -186,7 +186,7 @@ else-part:
 
 statement-expression: 
 	| primary-expression '(' argument-list ')'
-	| new type '(' argument-list ')'
+	| "new" type '(' argument-list ')'
 	| unary-expression assignment-expression expression
 	| primary-expression increment-decrement
 	| increment-decrement primary-expression
@@ -294,6 +294,9 @@ expression-unary-operator:
 	| '-'
 	| "++"
 	| "--"
+	| "!"
+	| "~"
+	| "*"
 
 // REVISAR 'BASE'
 primary-expression:
@@ -436,3 +439,8 @@ variable-initializer-list:
 variable-initializer-list-p:
 	| ',' variable-initializer-list
 	| EPSILON
+
+
+increment-decrement:
+	| "++"
+	| "--"
