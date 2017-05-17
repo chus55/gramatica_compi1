@@ -56,7 +56,7 @@
 - 
 
 ## TO-FIX: Ambiguous
-- type-declaration
+- ~~type-declaration~~
 - class-member-declaration
 - statement-expression
 - optional-statement-list

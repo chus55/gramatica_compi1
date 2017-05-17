@@ -35,7 +35,10 @@ namespace-declaration:
 namespace-body:
 	| '{' optional-using-directive optional-namespace-member-declaration '}'
 
-type-declaration: //TO-FIX: AMBIGUOUS
+type-declaration:
+	| group-modifier group-declaration 
+    
+group-declaration:
 	| class-declaration
     | interface-declaration
     | enum-declaration
@@ -43,11 +46,15 @@ type-declaration: //TO-FIX: AMBIGUOUS
 class-declaration:
 	| class-modifier "class" identifier inheritance-base class-body optional-body-end
 
-class-modifier:
+group-modifier:
 	| "public"
 	| "protected"
 	| "private"
+	| EPSILON
+
+class-modifier:
 	| "abstract"
+	| EPSILON
 
 inheritance-base:
 	| ':' identifiers-list
@@ -62,7 +69,7 @@ class-member-declaration: //TO-FIX: AMBIGUOUS
 	| constructor-declaration
 
 constructor-declaration:
-	| constructor-modifier constructor-declarator maybe-empty-block
+	| group-modifier constructor-declarator maybe-empty-block
 
 constructor-declarator:
 	| identifier '(' fixed-parameters ')' constructor-initializer
@@ -70,12 +77,6 @@ constructor-declarator:
 constructor-initializer:
 	| ':' "base" '(' argument-list ')'
 	| EPSILON
-
-constructor-modifier:
-    | "public"
-    | "protected"
-    | "private"
-    | EPSILON
 
 optional-body-end:
 	| ';'
@@ -359,12 +360,9 @@ method-declaration:
 	| method-header maybe-empty-block
 
 method-header:
-	| method-modifier type-or-void identifier '(' fixed-parameters ')' 
+	| group-modifier method-modifier type-or-void identifier '(' fixed-parameters ')' 
 
 method-modifier:
-    | "public"
-    | "protected"
-    | "private"
     | "static"
     | "virtual"
     | "override"
@@ -372,7 +370,7 @@ method-modifier:
     | EPSILON
 
 field-declaration: 
-	| field-modifier type-or-var variable-declarator-list ';'
+	| group-modifier field-modifier type-or-var variable-declarator-list ';'
 
 variable-declarator-list:
 	| identifier variable-assigner variable-declarator-list-p
@@ -390,14 +388,11 @@ variable-initializer: //TO-FIX: AMBIGUOUS
 	| array-initializer
 
 field-modifier:
-    | "public"
-    | "protected"
-    | "private"
     | "static"
     | EPSILON
 
 interface-declaration: 
-	| interface-modifier "interface" identifier inheritance-base interface-body optional-body-end
+	| "interface" identifier inheritance-base interface-body optional-body-end
 
 interface-body:
 	| '{' interface-method-declaration-list '}'
@@ -406,23 +401,11 @@ interface-method-declaration-list:
 	| method-header ';' interface-method-declaration-list
 	| EPSILON
 
-interface-modifier:
-    | "public"
-    | "protected"
-    | "private"
-    | EPSILON
-
 enum-declaration: 
-	| enum-modifier "enum" identifier enum-body optional-body-end
+	| "enum" identifier enum-body optional-body-end
 
 enum-body:
 	| '{' optional-identifiers-list '}'
-
-enum-modifier:
-    | "public"
-    | "protected"
-    | "private"
-    | EPSILON
 
 optional-array-initializer:
 	| array-initializer
