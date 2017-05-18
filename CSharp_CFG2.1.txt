@@ -1,6 +1,9 @@
 /*
 	Consideraciones: 
 		1. Todos las producciones "optional" deben tener una produccion "EPSILON"
+		2. Múltiples clases
+		3. class-member-declaration-list pendiente a agregar
+		4. 
 */
 
 code:
@@ -14,7 +17,7 @@ using-directive:
 	| "using" identifier identifier-attribute ';' optional-using-directive
 
 optional-using-directive:
-	| using-directivek
+	| using-directive
 	| EPSILON
 
 identifier-attribute:
@@ -192,11 +195,11 @@ else-part:
 
 statement-expression: //TO-FIX: AMBIGUOUS
 	| primary-expression statement-expression-p
-	| unary-expression assignment-expression expression
+	| unary-expression unary-expression-p
 	| increment-decrement primary-expression
 
 local-variable-declaration:
-	| type variable-declarator-list	
+	| type-or-var variable-declarator-list	
 
 fixed-parameter:
 	| type identifier
@@ -314,6 +317,9 @@ instance-expression: //TO-FIX: AMBIGUOUS
 	| array-type array-initializer
     | type '(' argument-list ')'
 
+//Corregir: separar en más producciones para
+//saber si es un atributo, llamada a función
+//o un arreglo.
 primary-expression-p:
     | '.' identifier primary-expression-p
 	| '(' argument-list ')' primary-expression-p
@@ -370,7 +376,7 @@ method-modifier:
     | EPSILON
 
 field-declaration: 
-	| group-modifier field-modifier type-or-var variable-declarator-list ';'
+	| group-modifier field-modifier type variable-declarator-list ';'
 
 variable-declarator-list:
 	| identifier variable-assigner variable-declarator-list-p
