@@ -1,9 +1,11 @@
 /*
 	Consideraciones: 
 		1. Todos las producciones "optional" deben tener una produccion "EPSILON"
-		2. Múltiples clases
+		2. __(Done)__ Múltiples clases, interfaces, enums fuera de namespace 
 		3. class-member-declaration-list pendiente a agregar
-		4. 
+		4. __(Done)__ Clases vacias
+		5. Arreglos multidimensionales: Agregar expression al rank-specifier.
+		6. Arreglos 2D: No permitir expression o commas en el rank-specifier.
 */
 
 code:
@@ -12,6 +14,7 @@ code:
 compilation-unit:
 	| optional-using-directive
 	| optional-namespace-member-declaration
+	| type-declaration-list
 
 using-directive:
 	| "using" identifier identifier-attribute ';' optional-using-directive
@@ -26,7 +29,7 @@ identifier-attribute:
 
 namespace-member-declaration:
 	| namespace-declaration optional-namespace-member-declaration
-	| type-declaration
+	| type-declaration-list
 
 optional-namespace-member-declaration:
 	| namespace-member-declaration
@@ -39,8 +42,12 @@ namespace-body:
 	| '{' optional-using-directive optional-namespace-member-declaration '}'
 
 type-declaration:
-	| group-modifier group-declaration 
-    
+	| group-modifier group-declaration
+ 
+type-declaration-list:
+	| type-declaration type-declaration-list
+	| EPSILON
+
 group-declaration:
 	| class-declaration
     | interface-declaration
@@ -64,12 +71,13 @@ inheritance-base:
 	| EPSILON
 
 class-body:
-	| '{' class-member-declaration '}'
+	| '{' optional-class-member-declaration '}'
 
-class-member-declaration: //TO-FIX: AMBIGUOUS
+optional-class-member-declaration: //TO-FIX: AMBIGUOUS
 	| field-declaration
 	| method-declaration
 	| constructor-declaration
+	| EPSILON
 
 constructor-declaration:
 	| group-modifier constructor-declarator maybe-empty-block
@@ -96,9 +104,8 @@ identifiers-list-p:
 	| ',' identifier identifiers-list-p
 	| EPSILON
 
-maybe-empty-block:
-	| '{' optional-statement-list '}'
-	| ';'
+
+===================================================
 
 optional-statement-list: //TO-FIX: AMBIGUOUS
 	| statement-list
@@ -116,13 +123,17 @@ embedded-statement: //TO-FIX: AMBIGUOUS
 	| statement-expression ';'
 	| selection-statement
 	| iteration-statement
-	| jump-statement
+	| jump-statement ';'
 
 iteration-statement:
 	| while-statement
 	| do-statement
 	| for-statement
 	| foreach-statement
+
+maybe-empty-block:
+	| '{' optional-statement-list '}'
+	| ';'
 
 while-statement:
 	| "while" '(' expression ')' embedded-statement
@@ -137,9 +148,9 @@ foreach-statement:
 	| "foreach" '(' type identifier "in" expression ')' embedded-statement
 
 jump-statement:
-	| "break" ';'
-	| "continue" ';'
-	| "return" optional-expression ';'
+	| "break"
+	| "continue"
+	| "return" optional-expression
 
 optional-statement-expression-list: //TO-FIX: AMBIGUOUS
 	| statement-expression-list
@@ -235,6 +246,8 @@ argument-list: //TO-FIX: AMBIGUOUS
 argument-list-p:
 	| ',' expression argument-list-p
 	| EPSILON
+
+===============================================================
 
 expression: //TO-FIX: AMBIGUOUS
     | unary-expression factorized-main-expression
@@ -383,6 +396,7 @@ variable-declarator-list:
 
 variable-assigner:
 	| '=' variable-initializer
+	| '=' identifier 
 	| EPSILON
 
 variable-declarator-list-p:
