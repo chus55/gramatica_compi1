@@ -325,13 +325,16 @@ primary-expression:
     | "new" instance-expression primary-expression-p
 	| literal primary-expression-p
 	| identifier primary-expression-p
-	| '(' expression ')' primary-expression-p
+	| '(' expression ')' primary-expression-p			////PREGUNTAR MAÑANA PORQUE ESTA ESTO AQUI
 	| "this" primary-expression-p
 
-instance-expression: //TO-FIX: AMBIGUOUS
-    | type '[' expression-list ']' optional-rank-specifier-list optional-array-initializer
-	| array-type array-initializer
-    | type '(' argument-list ')'
+instance-expression:
+	| type instance-expression-factorized
+
+instance-expression-factorized:
+	| '[' expression-list ']' optional-rank-specifier-list optional-array-initializer
+	| rank-specifier-list array-initializer
+	| '(' argument-list ')'
 
 //Corregir: separar en más producciones para
 //saber si es un atributo, llamada a función
@@ -351,15 +354,12 @@ literal:
 	| "true"
 	| "false"
 
-expression-list: //TO-FIX: AMBIGUOUS
+expression-list:
 	| expression optional-expression-list
 
-optional-expression-list: //TO-FIX: AMBIGUOUS
+optional-expression-list:
 	| expression-list
 	| EPSILON
-
-array-type:
-	| type rank-specifier-list
 
 rank-specifier-list: 
 	| rank-specifier optional-rank-specifier-list
