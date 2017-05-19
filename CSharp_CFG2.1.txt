@@ -2,7 +2,7 @@
 	Consideraciones: 
 		1. Todos las producciones "optional" deben tener una produccion "EPSILON"
 		2. __(Done)__ Múltiples clases, interfaces, enums fuera de namespace 
-		3. class-member-declaration-list pendiente a agregar
+		3. __(Done)__ class-member-declaration-list pendiente a agregar
 		4. __(Done)__ Clases vacias
 		5. Arreglos multidimensionales: Agregar expression al rank-specifier.
 		6. Arreglos 2D: No permitir expression o commas en el rank-specifier.
@@ -16,36 +16,36 @@ compilation-unit:
 	| optional-namespace-member-declaration
 	| type-declaration-list
 
-using-directive:
-	| "using" identifier identifier-attribute ';' optional-using-directive
-
 optional-using-directive:
 	| using-directive
 	| EPSILON
 
-identifier-attribute:
-	| '.' identifier identifier-attribute
+optional-namespace-member-declaration:
+	| namespace-member-declaration
 	| EPSILON
+
+type-declaration-list:
+	| type-declaration type-declaration-list
+	| EPSILON
+
+using-directive:
+	| "using" identifier identifier-attribute ';' optional-using-directive
 
 namespace-member-declaration:
 	| namespace-declaration optional-namespace-member-declaration
 	| type-declaration-list
 
-optional-namespace-member-declaration:
-	| namespace-member-declaration
-	| EPSILON
+type-declaration:
+	| group-modifier group-declaration
 
 namespace-declaration:
 	| "namespace" identifier identifier-attribute namespace-body
 
 namespace-body:
 	| '{' optional-using-directive optional-namespace-member-declaration '}'
-
-type-declaration:
-	| group-modifier group-declaration
- 
-type-declaration-list:
-	| type-declaration type-declaration-list
+	
+identifier-attribute:
+	| '.' identifier identifier-attribute
 	| EPSILON
 
 group-declaration:
@@ -71,13 +71,16 @@ inheritance-base:
 	| EPSILON
 
 class-body:
-	| '{' optional-class-member-declaration '}'
+	| '{' optional-class-member-declaration-list '}'
 
-optional-class-member-declaration: //TO-FIX: AMBIGUOUS
+optional-class-member-declaration-list:
+	| class-member-declaration optional-class-member-declaration-list
+	| EPSILON
+
+class-member-declaration: //TO-FIX: AMBIGUOUS
 	| field-declaration
 	| method-declaration
 	| constructor-declaration
-	| EPSILON
 
 constructor-declaration:
 	| group-modifier constructor-declarator maybe-empty-block
