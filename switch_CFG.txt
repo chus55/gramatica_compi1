@@ -1,0 +1,14 @@
+switch_statement -> switch '('  Expression ')' '{' Switch_Body '}'
+
+/*Semantico: validar que los operandos sean literales*/
+Switch_Body 	-> Case List_Cases
+
+List_Cases -> Case
+			| Epsilon
+
+Case 		-> case LogicalOr_Expression ':' Case_Body
+			| default ':' Case_Body
+			| epsilon 
+
+Case_Body	-> Basic_Statement_List
+			|  Compound_Statement			

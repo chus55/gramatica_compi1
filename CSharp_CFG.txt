@@ -1,0 +1,361 @@
+program:
+	| statement-list
+
+statement-list:
+	| statement statement-list
+	| ε
+
+statement:
+	| basic-statement
+	| declarative-statement
+
+basic-statement:
+	| variable-declaration
+	| if-statement
+	| switch-statement
+	| iterate-statement
+	| jump-statement
+	| compound-statement
+	| expression-statement
+	| function-call-statement
+	| using-statement // TODO
+
+declarative-statement:
+	| func-or-var-declaration // TODO
+	| class-declaration // TODO
+	| enum-declaration // TODO
+	| interface-declaration // TODO
+
+function-call-statement:
+	| id function-call
+
+function-call:
+	| '(' params-list ')' concat-call
+	| '.' id function-call
+
+concat-call:
+	| '.' function-call-statement
+	| ε
+
+// IF
+// Semantico: Expresion debe retornar un valor booleano
+if-statement:
+	| if '(' expression ')' if-statement-body else-statement
+
+if-statement-body:
+	| compound-statement
+	| basic-statement
+
+else-statement:
+	| "else" if-statement-body
+	| ε
+
+//SWITCH
+switch-statement:
+	| switch '(' expression ')' '{' switch-body '}'
+
+//Semantico: Validar que los operandos sean literales
+switch-body:
+	| case cases-list
+
+cases-list:
+	| case
+	| ε
+
+case:
+	| case logical-or-expression ':' case-body
+	| default ':' case-body
+	| ε
+
+case-body:
+	| basic-statement-list
+	| compound-statement
+
+//ITERATORS
+iterate-statement:
+	| for-statement
+	| while-statement
+	| do-while-statement
+	| for-each-statement
+
+//Semantico: Validar que logical-or-expression retorna booleano
+for-statement:
+	| for '(' for-initializer ';' logical-or-expression ';' for-iterator ';' ')' for-body
+
+for-initializer:
+	| expression
+	| ε
+
+//Semantico: Validar que expression no sea solo literal o id
+for-iterator:
+	| expression
+	| ε
+
+for-body:
+	| compound-statement
+	| basic-statement
+	| ε
+
+for-each-statement:
+	| "foreach" '(' type-specifier id "in" primary-expression ')' block
+
+variable-declaration:
+	| type-specifier is-array-identifier id initializer declarations-list ';'
+
+declarations-list:
+	| ',' declaration declarations-list
+	| ε
+
+declaration:
+	| id is-array initializer
+
+is-array-identifier:
+	| '[' ']' is-array-identifier
+	| ε
+
+initializer:
+	| '=' initializer-p
+	| ε
+
+initializer-p:
+	| assignment-expression
+	| inline-array-declaration
+	| "new" type-specifier is-array-or-constructor
+
+is-array-or-constructor:
+	| is-array-identifier
+	| '(' params-list ')'
+
+params-list:
+	| param params-list-p
+	| ε
+
+params-list-p:
+	| ',' params-list
+	| ε
+
+param:
+	| literal
+	| id function-call-or-id
+
+function-call-or-id:
+	| '(' params-list ')'
+	| '.' id function-call-or-id
+	| ε
+
+is-array-identifier-deeper:
+	| '[' int-or-id ']' is-array-identifier-deeper-p
+	| ε
+
+is-array-identifier-deeper-p:
+	| '[' ']' is-array-identifier-deeper-p
+	| inline-array-declaration
+	| ε
+
+int-or-id:
+	| literal-int
+	| id
+
+array-initializar:
+	| expression
+	| array-initializer-p
+
+array-initializer-p:
+	| inline-array-declaration array-initializer-p2
+	| "new" type-specifier is-array-or-constructor
+
+array-initializer-p2:
+	| ',' array-intializer-p
+	| ε
+
+inline-array-declaration:
+	| '{' array-initializer '}'
+
+type-specifier:
+	| "int"
+	| "float"
+	| "bool"
+	| "string"
+	| "void"
+	| id
+
+using-statement:
+	| "using" id
+
+compound-statement:
+	| '{' basic-statements-list '}'
+
+basic-statements-list:
+	| basic-statement basic-statements-list
+	| ε
+
+expression-statement:
+	| expression ';'
+	| ';'
+
+expression:
+	| assignment-expression inline-expression
+
+inline-expression:
+	| ',' expression
+	| ε
+
+assignment-expression:
+	| null-coalescing-expression ternary-expression assignment-expression-p
+
+assignment-expression-p:
+	| assignment-operator assignment-expression
+	| ε
+
+assignment-operator:
+	| "="
+	| "*="
+	| "/="
+	| "%="
+	| "+="
+	| "-="
+	| "<<="
+	| ">>="
+	| "&="
+	| "^="
+	| "|="
+
+ternary-expression:
+	| '?' expression ':' assignment-expression
+	| ε
+
+null-coalescing-expression:
+	| logical-or-expression null-coalescing-expression-p
+
+null-coalescing-expression-p:
+	| "??" null-coalescing-expression
+	| ε
+
+logical-or-expression-p:
+	| "||" logical-bitwise-and-expression
+	| ε
+
+logical-bitwise-and-expression:
+	| bitwise-or-expression logical-bitwise-and-expression-p
+
+logical-bitwise-and-expression-p:
+	| "&&" bitwise-or-expression
+	| ε
+
+bitwise-or-expression:
+	| xor-expression bitwise-or-expression-p
+
+bitwise-or-expression-p:
+	| '|' xor-expression
+	| ε
+
+xor-expression:
+	| bitwsine-and-expression xor-expression-p
+
+xor-expression-p:
+	| '^' bitwise-and-expression
+	| ε
+
+bitwise-and-expression:
+	| equality-expression bitwise-and-expression-p
+
+bitwsie-and-expression-p:
+	| '&' equality-expression
+	| ε
+
+equality-expression:
+	| relational-expression equality-expression-p
+
+equality-expression-p:
+	| "==" relational-expression
+	| "!=" relational-expression
+	| ε
+
+relational-expression:
+	| shift-expression relational-expression-p
+
+relational-expression-p:
+	| '<'	shift-expression
+	| '>' shift-expression
+	| "<=" shift-expression
+	| ">=" shift-expression
+	| ε
+
+shift-expression:
+	| additive-expression
+	| shift-expression-p
+
+shift-expression-p:
+	| "<<" additive-expression
+	| ">>" additive-expression
+	| ε
+
+additive-expression:
+	| multiplicative-expression additive-expression-p
+
+additive-expression-p:
+	| '+' multiplicative-expression additive-expression-p
+	| '-' multiplicative-expression additive-expression-p
+	| ε
+
+multiplicative-expression:
+	| unary-expression multiplicative-expression-p
+
+multiplicative-expression-p:
+	| '*' unary-expression multiplicative-expression-p
+	| '/' unary-expression multiplicative-expression-p
+	| '%' unary-expression multiplicative-expression-p
+	| ε
+
+unary-expression:
+	| postfix-expression
+	| "++" unary-expression
+	| "--" unary-expression
+	| unary-operator unary-expression
+
+unary-operator:
+	| '&'
+	| '*'
+	| '+'
+	| '-'
+	| '~'
+	| '!'
+
+postfix-expression:
+	| primary-expression postfix-expression-p
+
+postfix-expression-p:
+	| '(' assignment-expressions-list ')'
+	| "++"
+	| "--"
+	| ε
+
+assignment-expressions-list:
+	| assignment-expression assignment-expressions-list-p
+	| ε
+
+assignment-expressions-list-p:
+	| ',' assignment-expression assignment-expressions-list-p
+	| ε
+
+primary-expression:
+	| id access-link-p
+	| literal
+	| '(' expression ')' access-link-p
+
+access-link:
+	| '[' expression ']' access-link-p
+	| '.' id access-link-p
+
+access-link-p:
+	| access-link access-link-p
+	| ε
+
+literal:
+	| int-literal
+	| char-literal
+	| float-literal
+	| string-literal
+	| date-literal
+	| "true"
+	| "false"

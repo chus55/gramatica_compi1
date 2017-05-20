@@ -5,7 +5,8 @@ Statement   ->  Basic_Statement
             |   Declarative_Statement
 
 Basic_Statement ->  Variable_Declaration
-                |   If_Statement  *TODO*
+                |   If_Statement
+                |   Switch_Statement
                 |   Iterate_Statement *TODO*
                 |   Jump_Statement  *TODO*
                 |   Compound_Statement
@@ -26,7 +27,9 @@ FunctionCall    ->  ( paramList ) Concat_Call
 Concat_Call ->  . FunctionCall_Statement
             | Epsilon
 
-If_Statement    ->  if(LogicalExpression) If_Statement_Body Else_statement
+//IF
+/*Semantico: Expression debe returnar un valor booleano*/
+If_Statement    ->  if(Expression) If_Statement_Body Else_statement
 
 If_Statement_Body  ->  Compound_Statement
                     |   Basic_Statement
@@ -34,7 +37,47 @@ If_Statement_Body  ->  Compound_Statement
 Else_statement  ->  else If_Statement_Body
                 | Epsilon
 
-LogicalExpression  ->  
+//SWITCH
+Switch_Statement -> switch '('  Expression ')' '{' Switch_Body '}'
+
+/*Semantico: validar que los operandos sean literales*/
+Switch_Body   -> Case List_Cases
+
+List_Cases -> Case
+      | Epsilon
+
+Case    -> case LogicalOr_Expression ':' Case_Body
+      | default ':' Case_Body
+      | epsilon 
+
+Case_Body -> Basic_Statement_List
+      |  Compound_Statement 
+
+//ITERATORS
+Iterate_Statement -> For_Statement
+          |  While_Statement
+          |  Do_While_Statement
+          |  ForEach_Statement
+
+//Semantica: Validar que LogicalOr_Expression returns boolean
+For_Statement -> for '(' For_initialialize ';' LogicalOr_Expression';' For_Iterator';' ')' Block
+
+For_initialialize -> Expression
+          |  Epsilon
+
+//Semantica: validar que expression no sea solo literal o id
+For_Iterator -> Expression
+        | Epsilon
+
+Block -> Compound_Statement
+      | Basic_Statement 
+      | ';' 
+
+While_Statement -> while '(' Expression ')' Block
+
+Do_While_Statement -> do Block while '(' Expression ')' ';'
+
+ForEach_Statement -> foreach '(' typeSpecifier Id in PrimaryExpression ')' Block
 
 Variable_Declaration    ->  typeSpecifier isArrayIdentifier Id initializer declarationList ;
 
@@ -50,7 +93,7 @@ initializer -> = initializer_P
             | Epsilon
 
 initializer_P    ->  Assignment_Expression
-                |   { arrayInitializer }
+                |   inlineArrayDeclaration
                 | 'new' typeSpecifier isArrayOrConstructor
 
 isArrayOrConstructor    ->  isArrayIdentifierDeeper
@@ -72,8 +115,9 @@ FunctionCallOrId    ->  ( paramList )
 isArrayIdentifierDeeper ->  [ IntOrId ] isArrayIdentifierDeeper_P
                         |   Epsilon
 
-isArrayIdentifierDeeper_P   ->  [ ]
-                            Epsilon
+isArrayIdentifierDeeper_P   ->  [ ] isArrayIdentifierDeeper_P
+                            | inlineArrayDeclaration
+                            |  Epsilon
 
 IntOrId ->  Literal_int
         |   Id
@@ -81,10 +125,13 @@ IntOrId ->  Literal_int
 arrayInitializer -> Expression
                  | arrayInitializer_P
                  
-arrayInitializer_P -> { arrayInitializer }  arrayInitializer_P2
+arrayInitializer_P -> inlineArrayDeclaration  arrayInitializer_P2
+                    | 'new' typeSpecifier  isArrayOrConstructor
 
 arrayInitializer_P2 -> , arrayInitializer_P
                   | Epsilon
+
+inlineArrayDeclaration -> { arrayInitializer } 
 
 typeSpecifier -> Int
              |  Float

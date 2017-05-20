@@ -1,0 +1,461 @@
+/*
+	Consideraciones: 
+		1. Todos las producciones "optional" deben tener una produccion "EPSILON"
+		2. __(Done)__ Múltiples clases, interfaces, enums fuera de namespace 
+		3. __(Done)__ class-member-declaration-list pendiente a agregar
+		4. __(Done)__ Clases vacias
+		5. Arreglos multidimensionales: Agregar expression al rank-specifier.
+		6. Arreglos 2D: No permitir expression o commas en el rank-specifier.
+*/
+
+code:
+	| compilation-unit
+
+compilation-unit:
+	| optional-using-directive
+	| optional-namespace-member-declaration
+	| type-declaration-list
+
+optional-using-directive:
+	| using-directive
+	| EPSILON
+
+optional-namespace-member-declaration:
+	| namespace-member-declaration
+	| EPSILON
+
+type-declaration-list:
+	| type-declaration type-declaration-list
+	| EPSILON
+
+using-directive:
+	| "using" identifier identifier-attribute ';' optional-using-directive
+
+namespace-member-declaration:
+	| namespace-declaration optional-namespace-member-declaration
+	| type-declaration-list
+
+type-declaration:
+	| group-modifier group-declaration
+
+namespace-declaration:
+	| "namespace" identifier identifier-attribute namespace-body
+
+namespace-body:
+	| '{' optional-using-directive optional-namespace-member-declaration '}'
+	
+identifier-attribute:
+	| '.' identifier identifier-attribute
+	| EPSILON
+
+group-declaration:
+	| class-declaration
+    | interface-declaration
+    | enum-declaration
+
+class-declaration:
+	| class-modifier "class" identifier inheritance-base class-body optional-body-end
+
+group-modifier:
+	| "public"
+	| "protected"
+	| "private"
+	| EPSILON
+
+class-modifier:
+	| "abstract"
+	| EPSILON
+
+inheritance-base:
+	| ':' identifiers-list
+	| EPSILON
+
+class-body:
+	| '{' optional-class-member-declaration-list '}'
+
+optional-class-member-declaration-list:
+	| class-member-declaration optional-class-member-declaration-list
+	| EPSILON
+
+class-member-declaration: //TO-FIX: AMBIGUOUS
+	| field-declaration
+	| method-declaration
+	| constructor-declaration
+
+constructor-declaration:
+	| group-modifier constructor-declarator maybe-empty-block
+
+constructor-declarator:
+	| identifier '(' fixed-parameters ')' constructor-initializer
+
+constructor-initializer:
+	| ':' "base" '(' argument-list ')'
+	| EPSILON
+
+optional-body-end:
+	| ';'
+	| EPSILON
+
+optional-identifiers-list:
+	| identifiers-list
+	| EPSILON
+
+identifiers-list:
+	| identifier identifiers-list-p
+
+identifiers-list-p:
+	| ',' identifier identifiers-list-p
+	| EPSILON
+
+
+===================================================
+
+optional-statement-list: //TO-FIX: AMBIGUOUS
+	| statement-list
+	| EPSILON
+
+statement-list:  //TO-FIX: AMBIGUOUS
+	| statement optional-statement-list 
+
+statement: //TO-FIX: AMBIGUOUS
+	| local-variable-declaration ';'
+	| embedded-statement
+
+embedded-statement: //TO-FIX: AMBIGUOUS
+	| maybe-empty-block
+	| statement-expression ';'
+	| selection-statement
+	| iteration-statement
+	| jump-statement ';'
+
+iteration-statement:
+	| while-statement
+	| do-statement
+	| for-statement
+	| foreach-statement
+
+maybe-empty-block:
+	| '{' optional-statement-list '}'
+	| ';'
+
+while-statement:
+	| "while" '(' expression ')' embedded-statement
+
+do-statement: 
+	| "do" embedded-statement "while" '(' expression ')' ';'
+
+for-statement:
+	| "for" '(' optional-for-initializer ';' optional-expression ';' optional-statement-expression-list ')' embedded-statement
+
+foreach-statement:
+	| "foreach" '(' type identifier "in" expression ')' embedded-statement
+
+jump-statement:
+	| "break"
+	| "continue"
+	| "return" optional-expression
+
+optional-statement-expression-list: //TO-FIX: AMBIGUOUS
+	| statement-expression-list
+	| EPSILON
+
+statement-expression-list: //TO-FIX: AMBIGUOUS
+	| statement-expression statement-expression-list-p
+
+statement-expression-list-p:
+	| ',' statement-expression statement-expression-list-p
+	| EPSILON
+
+optional-expression: //TO-FIX: AMBIGUOUS
+	| expression
+	| EPSILON
+
+optional-for-initializer: //TO-FIX: AMBIGUOUS
+	| local-variable-declaration
+	| statement-expression-list
+	| EPSILON
+
+selection-statement:
+	| if-statement
+	| switch-statement
+
+switch-statement:
+	| "switch" '(' expression ')' '{' optional-switch-section-list '}'
+
+optional-switch-section-list:
+	| switch-label-list statement-list optional-switch-section-list
+	| EPSILON
+
+switch-label-list:
+	| switch-label switch-label-list-p
+
+switch-label-list-p:
+	| switch-label-list
+	| EPSILON
+	
+switch-label:
+	| "case" expression ':'
+	| "default" ':'
+
+if-statement:
+	| "if" '(' expression ')' embedded-statement optional-else-part
+
+optional-else-part:
+	| else-part
+	| EPSILON
+
+else-part:
+	| "else" embedded-statement	
+
+statement-expression: //TO-FIX: AMBIGUOUS
+	| primary-expression statement-expression-p
+	| unary-expression unary-expression-p
+	| increment-decrement primary-expression
+
+local-variable-declaration:
+	| type-or-var variable-declarator-list	
+
+fixed-parameter:
+	| type identifier
+
+fixed-parameters:
+	| fixed-parameter fixed-paramaters-p
+	| EPSILON
+
+fixed-parameters-p:
+	| ',' fixed-parameter fixed-parameters-p
+	| EPSILON
+
+type:
+	| "int"
+	| "char"
+	| "string"
+	| "bool"
+	| "float"
+	| identifier
+
+type-or-var:
+	| type
+	| "var"
+
+type-or-void:
+	| type
+	| "void"
+
+argument-list: //TO-FIX: AMBIGUOUS
+	| expression argument-list-p
+	| EPSILON
+
+argument-list-p:
+	| ',' expression argument-list-p
+	| EPSILON
+
+===============================================================
+
+expression: //TO-FIX: AMBIGUOUS
+    | unary-expression factorized-main-expression
+	
+factorized-main-expression:
+    | expression-p
+	| assignment-operator expression expression-p
+
+expression-p:
+    | '?' expression ':' expression expression-p
+    | "??" expression expression-p 
+	| "||" expression expression-p
+	| "&&" expression expression-p
+	| '|' expression expression-p
+	| '^' expression expression-p
+	| '&' expression expression-p
+	| expression-equality-operator expression expression-p
+	| expression-relational-operator expression expression-p
+	| "is" built-in-type expression-p
+	| expression-shift-operator expression expression-p
+	| '+' expression expression-p
+	| '-' expression expression-p
+	| '*' expression expression-p
+	| '/' expression expression-p
+	| '%' expression expression-p
+    | EPSILON
+
+expression-shift-operator: 
+	| "<<"
+	| ">>"
+
+expression-equality-operator:
+	| "=="
+	| "!="
+
+expression-relational-operator:
+	| '<'
+	| '>'
+	| "<="
+	| ">="
+	| "is"
+	| "as"
+
+assignment-operator:
+	| '='
+	| "+="
+	| "-="
+	| "*="
+	| "/="
+	| "%="
+	| "&="
+	| "|="
+	| "^="
+	| "<<="
+	| ">>="
+
+unary-expression: //TO-FIX: AMBIGUOUS
+	| expression-unary-operator unary-expression
+	| '(' type ')' unary-expression
+	| primary-expression
+
+expression-unary-operator:
+	| '+'
+	| '-'
+	| increment-decrement
+	| "!"
+	| "~"
+	| "*"
+
+// REVISAR 'BASE'
+primary-expression:
+    | "new" instance-expression primary-expression-p
+	| literal primary-expression-p
+	| identifier primary-expression-p
+//	| '(' expression ')' primary-expression-p			////PREGUNTAR MAÑANA PORQUE ESTA ESTO AQUI
+	| "this" primary-expression-p
+
+instance-expression:
+	| type instance-expression-factorized
+
+instance-expression-factorized:
+	| '[' expression-list ']' optional-rank-specifier-list optional-array-initializer
+	| rank-specifier-list array-initializer
+	| '(' argument-list ')'
+
+primary-expression-p:
+    | '.' identifier optional-funct-or-array-call primary-expression-p
+    | increment-decrement primary-expression-p 
+    | EPSILON 
+
+optional-funct-or-array-call:
+	| '(' argument-list ')'
+	| optional-array-access-list 
+	| EPSILON
+
+optional-array-access-list:
+	| '[' expression-list ']' optional-array-access-list
+	| EPSILON
+
+literal:
+	| int-literal
+	| char-literal
+	| float-literal
+	| string-literal
+	| "true"
+	| "false"
+
+expression-list:
+	| expression optional-expression-list
+
+optional-expression-list:
+	| expression-list
+	| EPSILON
+
+rank-specifier-list: 
+	| rank-specifier optional-rank-specifier-list
+
+optional-rank-specifier-list:
+	| rank-specifier-list
+	| EPSILON 	
+
+rank-specifier:
+	| '[' optional-comma-list ']'
+
+optional-comma-list:
+	| comma-list
+	| EPSILON
+
+comma-list: 
+	| ',' optional-comma-list
+
+method-declaration:
+	| method-header maybe-empty-block
+
+method-header:
+	| group-modifier method-modifier type-or-void identifier '(' fixed-parameters ')' 
+
+method-modifier:
+    | "static"
+    | "virtual"
+    | "override"
+    | "abstract"
+    | EPSILON
+
+field-declaration: 
+	| group-modifier field-modifier type variable-declarator-list ';'
+
+variable-declarator-list:
+	| identifier variable-assigner variable-declarator-list-p
+
+variable-assigner:
+	| '=' variable-initializer
+	| '=' identifier 
+	| EPSILON
+
+variable-declarator-list-p:
+	| ',' variable-declarator-list
+	| EPSILON
+
+variable-initializer: //TO-FIX: AMBIGUOUS
+	| expression
+	| array-initializer
+
+field-modifier:
+    | "static"
+    | EPSILON
+
+interface-declaration: 
+	| "interface" identifier inheritance-base interface-body optional-body-end
+
+interface-body:
+	| '{' interface-method-declaration-list '}'
+
+interface-method-declaration-list:
+	| method-header ';' interface-method-declaration-list
+	| EPSILON
+
+enum-declaration: 
+	| "enum" identifier enum-body optional-body-end
+
+enum-body:
+	| '{' optional-identifiers-list '}'
+
+optional-array-initializer:
+	| array-initializer
+	| EPSILON
+
+array-initializer: 
+	| '{' optional-variable-initializer-list '}'
+
+optional-variable-initializer-list: //TO-FIX: AMBIGUOUS
+	| variable-initializer-list
+	| EPSILON
+
+variable-initializer-list: //TO-FIX: AMBIGUOUS
+	| variable-initializer variable-initializer-list-p
+
+variable-initializer-list-p:
+	| ',' variable-initializer-list
+	| EPSILON
+
+increment-decrement:
+	| "++"
+	| "--"
+
+statement-expression-p:
+	| '(' argument-list ')'
+	| increment-decrement
